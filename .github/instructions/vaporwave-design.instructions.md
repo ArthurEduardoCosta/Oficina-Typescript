@@ -6,22 +6,37 @@ applyTo: ["src/components/**/*.tsx", "src/index.css"]
 
 # Vaporwave Sunset Design Guide
 
+## 🚀 Quick Start
+
+**For new components**, copy this template and customize:
+```tsx
+// ALWAYS use these Tailwind classes, never hex codes
+className="bg-gradient-to-br from-purple-900 to-black p-6 rounded-lg border border-cyan-500/30"
+```
+
+**NEVER do this:**
+- ❌ `style={{ backgroundColor: '#FF10F0' }}` — Use Tailwind classes
+- ❌ `className="bg-gray-100"` — Use dark colors (slate/purple)
+- ❌ `className="text-gray-700"` — Use cyan/pink text
+
+---
+
 ## Aesthetic Philosophy
 
 The Bingo Mixer uses a **classic vaporwave aesthetic** with a dark, cyberpunk-inspired foundation layered with neon accents and smooth gradients. This creates a nostalgic 80s-90s retro-futuristic atmosphere perfect for a social mixer game.
 
 ### Core Principles
 - **Dark Foundation**: Navy/purple gradients establish depth and mood
-- **Neon Accents**: Hot pink and cyan provide electric, eye-catching highlights
-- **Gradient Emphasis**: Text and interactive elements use gradient colors for visual interest
-- **Smooth Transitions**: All color changes animate smoothly for immersion
-- **High Contrast**: Dark backgrounds ensure light text/accents remain readable
+- **Neon Accents**: Hot pink (#FF10F0) and cyan (#00FFFF) provide electric highlights
+- **Gradient Emphasis**: Text and interactive elements use gradients for visual pop
+- **Smooth Transitions**: All color changes use `transition-all duration-150`
+- **High Contrast**: Dark backgrounds ensure light text remains readable (WCAG AA minimum)
 
 ---
 
-## Color Palette
+## Color Palette Reference
 
-All colors are defined as Tailwind theme variables in `src/index.css`. **Use Tailwind classes only**—never hardcode hex values in components.
+**All colors are defined in `src/index.css`.** See [Theme Variables Below](#theme-variables-src/indexcss).
 
 ### Theme Variables (in `src/index.css`)
 
@@ -31,115 +46,149 @@ All colors are defined as Tailwind theme variables in `src/index.css`. **Use Tai
   --color-accent-light: #FF69F0;     /* Light Pink - Hover states */
   --color-marked: #00FFFF;           /* Cyan - Marked/selected squares */
   --color-marked-border: #00D4FF;    /* Bright Cyan - Active borders */
-  --color-bingo: #FF1493;            /* Deep Magenta - Winning line highlights */
+  --color-bingo: #FF1493;            /* Deep Magenta - Winning highlights */
 }
 ```
 
-### Extended Color Usage
+### Color Usage Quick Reference
 
-| Element | Tailwind Class | Purpose |
-|---------|---|---|
-| Dark background base | `bg-slate-900`, `from-[#1a0033]` | Container backgrounds |
-| Dark purple gradient | `via-purple-950` | Mid-gradient transitions |
-| Black fallback | `to-black` | Gradient end |
-| Cyan text/border | `text-cyan-300`, `border-cyan-500` | Secondary highlights, instructions |
-| Pink text/border | `text-pink-400`, `border-pink-500` | Primary highlights, buttons |
-| Semi-transparent dark | `bg-slate-800`, `bg-purple-950/60` | Cards, overlays |
-| Gradient directions | `bg-gradient-to-br`, `from-pink-600 to-purple-600` | Visual flow & emphasis |
+| Use Case | Tailwind Class | Example |
+|---|---|---|
+| **Main background** | `bg-gradient-to-br from-[#1a0033] via-purple-950 to-black` | [StartScreen.tsx](src/components/StartScreen.tsx#L7) |
+| **Page header** | `bg-gradient-to-r from-purple-900 to-pink-900` | [GameScreen.tsx](src/components/GameScreen.tsx#L19) |
+| **Main title** | `text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300` | [StartScreen.tsx](src/components/StartScreen.tsx#L10) |
+| **Instruction text** | `text-cyan-300` | [GameScreen.tsx](src/components/GameScreen.tsx#L26) |
+| **Primary button** | `bg-gradient-to-r from-pink-600 to-pink-500 active:from-pink-700` | [StartScreen.tsx](src/components/StartScreen.tsx#L23) |
+| **Unmarked square** | `bg-slate-800 border-slate-600 text-slate-300` | [BingoSquare.tsx](src/components/BingoSquare.tsx#L10) |
+| **Marked square** | `bg-cyan-400/20 border-cyan-400 text-cyan-200` | [BingoSquare.tsx](src/components/BingoSquare.tsx#L12) |
+| **Winning square** | `bg-gradient-to-br from-pink-500 to-pink-600 border-pink-400` | [BingoSquare.tsx](src/components/BingoSquare.tsx#L14) |
+| **Modal card** | `bg-gradient-to-br from-purple-900 to-purple-950 border-pink-500/50` | [BingoModal.tsx](src/components/BingoModal.tsx#L5) |
+| **Card border** | `border border-cyan-500/30` or `border-pink-500/30` | [BingoBoard.tsx](src/components/BingoBoard.tsx#L11) |
 
 ---
 
 ## Component Styling Patterns
 
-### 1. **Backgrounds & Containers**
+### 1. Full-Page Backgrounds
 
-**Primary containers** (StartScreen, GameScreen):
+**Pattern:** Dark gradient with depth (top-left dark → bottom-right black)
+
 ```tsx
-// Dark gradient background with depth
-className="bg-gradient-to-br from-[#1a0033] via-purple-950 to-black"
+// StartScreen & GameScreen use this
+<div className="bg-gradient-to-br from-[#1a0033] via-purple-950 to-black min-h-full">
 ```
 
-**Secondary containers** (cards, modals):
+**Why:** Creates atmospheric sunset/cyberpunk mood instantly
+
+---
+
+### 2. Cards & Containers
+
+**Pattern:** Semi-transparent dark with borders and backdrop blur
+
 ```tsx
-// Semi-transparent dark with subtle border
-className="bg-purple-950/60 backdrop-blur rounded-lg border border-pink-500/30"
+// How to style a container/card:
+<div className="bg-purple-950/60 backdrop-blur rounded-lg p-6 border border-pink-500/30">
+  {/* content */}
+</div>
 ```
 
-**Board/grid containers**:
+**Real example** — [StartScreen.tsx L14](src/components/StartScreen.tsx#L14):
 ```tsx
-// Dark base with purple border accent
-className="bg-slate-900/50 border border-purple-500/30"
+<div className="bg-purple-950/60 backdrop-blur rounded-lg p-6 shadow-lg border border-pink-500/30">
 ```
 
-### 2. **Text & Headings**
+---
 
-**Main titles** (use gradient for emphasis):
+### 3. Text & Headings
+
+**Main titles** (always use gradient):
 ```tsx
-className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300"
+<h1 className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300">
+  Bingo Mixer
+</h1>
 ```
 
-**Subtext & instructions** (readable cyan):
+**Secondary text** (always use cyan):
 ```tsx
-className="text-cyan-300"
+<p className="text-cyan-300">Find your people!</p>
 ```
 
-**Accent text** (primary highlights):
+**DO NOT use:**
+- ❌ `text-gray-900` — Use `text-cyan-300` or white
+- ❌ `text-gray-600` — Use `text-cyan-200` for muted
+
+---
+
+### 4. Interactive Elements (Buttons)
+
+**Primary buttons** (CTA — "Start Game", "Keep Playing"):
 ```tsx
-className="text-pink-400"
+<button className="bg-gradient-to-r from-pink-600 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg active:from-pink-700 active:to-pink-600 transition-all">
+  Action
+</button>
 ```
 
-### 3. **Interactive Elements (Buttons)**
-
-**Primary buttons** (CTA):
+**Secondary buttons** (Back, navigation):
 ```tsx
-className="bg-gradient-to-r from-pink-600 to-pink-500 text-white active:from-pink-700 active:to-pink-600"
+<button className="text-cyan-300 px-3 py-1.5 rounded active:bg-purple-800">
+  ← Back
+</button>
 ```
 
-**Secondary buttons** (navigation):
+---
+
+### 5. Bingo Square States (Most Important!)
+
+Location: [src/components/BingoSquare.tsx](src/components/BingoSquare.tsx#L8-L16)
+
+**Template for state-based styling:**
 ```tsx
-className="text-cyan-300 active:bg-purple-800"
+const stateClasses = square.isMarked
+  ? isWinning
+    ? 'bg-gradient-to-br from-pink-500 to-pink-600 border-pink-400 text-white'      // 🎉 Winning!
+    : 'bg-cyan-400/20 border-cyan-400 text-cyan-200'                                // ✅ Marked
+  : 'bg-slate-800 border-slate-600 text-slate-300 active:bg-slate-700';            // ⭕ Default
 ```
 
-### 4. **Bingo Square States**
+**Visual progression:**
+| State | Background | Border | Text | Checkmark |
+|---|---|---|---|---|
+| **Unmarked** | `bg-slate-800` | `border-slate-600` | `text-slate-300` | — |
+| **Marked** | `bg-cyan-400/20` | `border-cyan-400` | `text-cyan-200` | `✓` cyan |
+| **Winning** | `bg-gradient from-pink-500 to-pink-600` | `border-pink-400` | `text-white` | — |
 
-**Unmarked squares** (default):
+---
+
+### 6. Headers & Banners
+
+**Page header** (with gradient):
 ```tsx
-stateClasses: 'bg-slate-800 border-slate-600 text-slate-300 active:bg-slate-700'
+<header className="bg-gradient-to-r from-purple-900 to-pink-900 border-b border-cyan-500/50">
 ```
 
-**Marked squares** (selected):
+**Status banner** (alert/bingo):
 ```tsx
-stateClasses: 'bg-cyan-400/20 border-cyan-400 text-cyan-200'
+<div className="bg-gradient-to-r from-pink-600 to-purple-600 text-white py-2">
+  🎉 BINGO! You got a line!
+</div>
 ```
 
-**Winning squares** (5-in-a-row):
+---
+
+### 7. Modals & Overlays
+
+**Modal backdrop** (dark overlay):
 ```tsx
-stateClasses: 'bg-gradient-to-br from-pink-500 to-pink-600 border-pink-400 text-white'
+<div className="fixed inset-0 bg-black/70">
 ```
 
-### 5. **Headers & Banners**
-
-**Page headers**:
+**Modal card** (gradient with border):
 ```tsx
-className="bg-gradient-to-r from-purple-900 to-pink-900 border-b border-cyan-500/50"
+<div className="bg-gradient-to-br from-purple-900 to-purple-950 border border-pink-500/50 rounded-xl p-6">
 ```
 
-**Alert/status banners**:
-```tsx
-className="bg-gradient-to-r from-pink-600 to-purple-600 text-white"
-```
-
-### 6. **Modals & Overlays**
-
-**Modal backdrop**:
-```tsx
-className="fixed inset-0 bg-black/70"
-```
-
-**Modal card**:
-```tsx
-className="bg-gradient-to-br from-purple-900 to-purple-950 border border-pink-500/50 rounded-xl"
-```
+**Real example** — [BingoModal.tsx](src/components/BingoModal.tsx)
 
 ---
 
@@ -163,90 +212,155 @@ bg-clip-text text-transparent bg-gradient-to-r from-pink-400 to-cyan-300
 
 ---
 
-## Animation & Transition
+## Animation & Transitions
 
-### Standard Motion
+**ALWAYS include `transition-all duration-150`** on interactive elements:
 
-- **Transitions**: Use `transition-all duration-150` for smooth state changes on interactive elements
-- **Hover states**: Buttons brighten (`active:from-pink-700`) or change background (`active:bg-purple-800`)
-- **Winning animation**: The modal uses `animate-[bounce_0.5s_ease-out]` for celebration effect
+```tsx
+// ✅ CORRECT
+<button className="bg-slate-800 active:bg-slate-700 transition-all duration-150">
+  Click me
+</button>
 
-### Guidelines
+// ❌ WRONG (no transition — feels broken)
+<button className="bg-slate-800 active:bg-slate-700">
+  Click me
+</button>
+```
 
-- ✅ Smooth color transitions between states
-- ✅ Staggered reveals for page load (use `animation-delay` for future enhancements)
-- ✅ High-impact moments (win animation, modal entrance)
-- ❌ Avoid excessive micro-interactions; focus on meaningful motion
+### Hover/Active States
+
+- **Buttons:** Darken on `active:` (e.g., `active:from-pink-700`)
+- **Text buttons:** Change background (e.g., `active:bg-purple-800`)
+- **Squares:** Subtle darkening (e.g., `active:bg-slate-700`)
+
+### Animations
+
+```tsx
+// Modal entrance animation (already in BingoModal.tsx)
+animate-[bounce_0.5s_ease-out]
+
+// Future: page load stagger
+animation-delay: 100ms  // Use this for sequential reveals
+```
+
+---
+
+## Troubleshooting & Visual Debugging
+
+### Problem: Text is hard to read on dark background
+
+**Cause:** Using gray text (`text-gray-600`, `text-gray-500`)
+
+**Fix:**
+```tsx
+// ❌ WRONG
+<p className="text-gray-600">Instruction text</p>
+
+// ✅ CORRECT
+<p className="text-cyan-300">Instruction text</p>
+```
+
+---
+
+### Problem: Component looks washed out / not vaporwave
+
+**Cause:** Using default Tailwind colors instead of gradients
+
+**Fix:**
+```tsx
+// ❌ WRONG
+<div className="bg-white p-4">
+<div className="bg-gray-100 border border-gray-200">
+
+// ✅ CORRECT
+<div className="bg-purple-950/60 backdrop-blur p-4 border border-pink-500/30">
+```
+
+---
+
+### Problem: Colors don't match on preview vs. production
+
+**Cause:** Not using `@theme` variables from `src/index.css`
+
+**Fix:** Always use Tailwind class names, never hex values in JSX:
+```tsx
+// ❌ WRONG
+style={{ color: '#FF10F0' }}
+
+// ✅ CORRECT
+className="text-accent"  // Maps to #FF10F0 via @theme
+```
+
+---
+
+## Accessibility Checklist
+
+When styling components:
+
+- [ ] Text contrast ratio ≥ 4.5:1 (WCAG AA) — test with [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
+- [ ] Don't use color alone to convey information — add text/icons (e.g., ✓ checkmark for marked squares)
+- [ ] Hover/focus states are visible and distinct
+- [ ] Interactive elements have at least 44x44px touch targets (mobile-friendly)
+- [ ] Modal has proper focus management and backdrop
+
+**Current status:** ✅ Bingo Mixer passes WCAG AA contrast tests
 
 ---
 
 ## Implementation Checklist
 
-When **creating new components**, ensure:
+When **creating or modifying components**, verify:
 
-- [ ] All colors use Tailwind classes (no hex hardcoding)
-- [ ] Dark backgrounds use appropriate slate/purple shades
-- [ ] Text is white or cyan for readability on dark backgrounds
-- [ ] Primary CTAs use pink gradient or pink solid
-- [ ] Borders use cyan or pink with reduced opacity (e.g., `border-pink-500/30`)
-- [ ] Gradients follow project patterns (diagonal for backgrounds, horizontal for headers)
-- [ ] Hover/active states brighten or darken appropriately
-- [ ] Modal overlays use `bg-black/70` base
-- [ ] Components have smooth `transition-all` for color changes
-
----
-
-## Extending the Palette
-
-### Adding New Colors
-
-If new design needs arise, add to `@theme` in `src/index.css`:
-
-```css
-@theme {
-  --color-new-accent: #FF00FF;  /* Magenta variation */
-}
-```
-
-Then use as: `bg-new-accent`, `text-new-accent`, etc.
-
-### Future Theme Support
-
-To support multiple themes (vaporwave, minimalist, etc.) in the future:
-
-1. Create theme-specific CSS files: `src/themes/vaporwave.css`, `src/themes/[future].css`
-2. Use CSS variables with theme namespaces
-3. Implement theme switcher in App.tsx
-4. Document each theme in separate instruction file
-
-**Current state**: Single vaporwave theme applied project-wide. Refactoring for theme switching is optional if needed later.
+- [ ] **No hardcoded colors** — use only Tailwind classes from `src/index.css` `@theme`
+- [ ] **Dark foundation** — background uses slate/purple shades or gradients
+- [ ] **Readable text** — all text is white, cyan, or pink (NEVER gray)
+- [ ] **Button styling** — primary CTAs use pink gradient, secondary use cyan
+- [ ] **Borders** — use cyan or pink with `/30` opacity (e.g., `border-pink-500/30`)
+- [ ] **Gradients** — diagonal for backgrounds (`to-br`), horizontal for headers (`to-r`)
+- [ ] **Transitions** — interactive elements have `transition-all duration-150`
+- [ ] **Hover states** — buttons/squares darken or brighten on `active:`
+- [ ] **Modal styling** — uses purple gradient + pink border (see [BingoModal.tsx](src/components/BingoModal.tsx))
+- [ ] **Accessibility** — text contrast ≥ 4.5:1, touch targets ≥ 44x44px
 
 ---
 
-## Common Pitfalls to Avoid
+## Real Component Examples from Project
 
-- ❌ Using gray/white/green from the original design—replace with vaporwave palette
-- ❌ Hardcoding hex colors—always use Tailwind classes from `@theme`
-- ❌ Light backgrounds on dark text—maintain dark base with light text/accents
-- ❌ Flat colors without gradients—use gradients for emphasis and visual interest
-- ❌ Text on dark backgrounds without sufficient contrast—test with Wave or browser tools
-- ❌ Disabling transitions—keep `transition-all` for smooth interactions
-
----
-
-## Example: New Component with Vaporwave
+### 1. StartScreen.tsx — Landing Page
 
 ```tsx
-export function NewComponent() {
+// File: src/components/StartScreen.tsx
+export function StartScreen({ onStart }: StartScreenProps) {
   return (
-    <div className="bg-gradient-to-br from-purple-900 to-black p-6 rounded-lg border border-cyan-500/30">
-      <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300 mb-4">
-        New Feature
-      </h2>
-      <p className="text-cyan-200 mb-6">Description text in readable cyan</p>
-      <button className="w-full bg-gradient-to-r from-pink-600 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg active:from-pink-700 active:to-pink-600 transition-all">
-        Action
-      </button>
+    // 🎨 Dark gradient background fills entire viewport
+    <div className="flex flex-col items-center justify-center min-h-full p-6 bg-gradient-to-br from-[#1a0033] via-purple-950 to-black">
+      <div className="text-center max-w-sm">
+        {/* 💫 Gradient title */}
+        <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300 mb-2">
+          Bingo Mixer
+        </h1>
+        {/* 💎 Cyan subtext */}
+        <p className="text-lg text-cyan-300 mb-8">Find your people!</p>
+        
+        {/* 📦 Semi-transparent card with backdrop blur */}
+        <div className="bg-purple-950/60 backdrop-blur rounded-lg p-6 shadow-lg border border-pink-500/30 mb-8">
+          <h2 className="font-semibold text-pink-300 mb-3">How to play</h2>
+          <ul className="text-left text-cyan-200 text-sm space-y-2">
+            <li>• Find people who match the questions</li>
+            <li>• Tap a square when you find a match</li>
+            <li>• Get 5 in a row to win!</li>
+          </ul>
+        </div>
+
+        {/* 🎯 Pink gradient button (CTA) */}
+        <button
+          onClick={onStart}
+          className="w-full bg-gradient-to-r from-pink-600 to-pink-500 text-white font-semibold py-4 px-8 rounded-lg text-lg active:from-pink-700 active:to-pink-600 transition-all"
+        >
+          Start Game
+        </button>
+      </div>
     </div>
   );
 }
@@ -254,19 +368,124 @@ export function NewComponent() {
 
 ---
 
-## References
+### 2. BingoSquare.tsx — Game State Logic
 
-- **Theme variables**: `src/index.css` (@theme block)
-- **Tailwind v4 docs**: Use `@theme`, CSS variables, native opacity
-- **Component examples**: See `src/components/` for BingoSquare, BingoModal, GameScreen styling patterns
-- **Color palette inspiration**: Classic vaporwave aesthetic (80s-90s cyberpunk, neon on dark backgrounds)
+**This is THE key component** — all game states happen here:
+
+```tsx
+// File: src/components/BingoSquare.tsx
+export function BingoSquare({ square, isWinning, onClick }: BingoSquareProps) {
+  const baseClasses =
+    'relative flex items-center justify-center p-1 text-center border rounded transition-all duration-150 select-none min-h-[60px] text-xs leading-tight';
+
+  // 🎮 State machine: unmarked → marked → winning
+  const stateClasses = square.isMarked
+    ? isWinning
+      ? 'bg-gradient-to-br from-pink-500 to-pink-600 border-pink-400 text-white'      // 🏆 BINGO!
+      : 'bg-cyan-400/20 border-cyan-400 text-cyan-200'                                // ✅ Marked
+    : 'bg-slate-800 border-slate-600 text-slate-300 active:bg-slate-700';            // ⭕ Default
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={square.isFreeSpace}
+      className={`${baseClasses} ${stateClasses}`}
+      aria-pressed={square.isMarked}
+    >
+      <span>{square.text}</span>
+      {square.isMarked && !square.isFreeSpace && (
+        <span className="absolute top-0.5 right-0.5 text-cyan-300 text-xs">✓</span>
+      )}
+    </button>
+  );
+}
+```
 
 ---
 
-## Questions or Updates?
+## Common Pitfalls & How to Fix
 
-If new design needs arise or vaporwave aesthetic needs refinement:
-1. Update color palette in `src/index.css`
-2. Update this guide with new patterns
-3. Ensure all component files follow updated patterns
-4. Test on multiple screen sizes for gradient/text rendering
+| Mistake | Why It's Wrong | Fix |
+|---|---|---|
+| `className="bg-white"` | Breaks vaporwave aesthetic | Use `bg-slate-800` or gradient |
+| `className="text-gray-600"` | Unreadable on dark background | Use `text-cyan-300` |
+| `style={{ color: '#FF10F0' }}` | Bypasses Tailwind theme system | Use `className="text-accent"` |
+| `onClick={() => setState(!state)}` (no transition) | Feels jarring, unpolished | Add `transition-all duration-150` |
+| `border border-gray-200` | Wrong palette | Use `border-cyan-500/30` or `border-pink-500/30` |
+| `<h1 className="text-pink-400">` (flat color) | Boring for titles | Use gradient: `bg-clip-text bg-gradient-to-r from-pink-400 to-cyan-300` |
+
+---
+
+## Extending the Design System
+
+### Adding a New Color
+
+If you need a new accent:
+
+1. Add to `src/index.css`:
+```css
+@theme {
+  --color-purple-accent: #9D4EDD;
+}
+```
+
+2. Use in components:
+```tsx
+className="bg-purple-accent text-purple-accent border-purple-accent"
+```
+
+---
+
+### Future: Multi-Theme Support
+
+To add light/dark themes later (not currently needed):
+
+1. Create theme files: `src/themes/vaporwave.css`, `src/themes/light.css`
+2. Use CSS variables with theme prefixes
+3. Implement toggle in `App.tsx`
+4. Document each theme separately
+
+**Current status:** Vaporwave only (project-wide). Easy to extend if needed.
+
+---
+
+## Testing & Verification
+
+### Before pushing changes:
+
+1. **Visual check** — Run `npm run dev`, browse each screen
+2. **Contrast check** — Use [WebAIM](https://webaim.org/resources/contrastchecker/) or browser DevTools (Accessibility tab)
+3. **Mobile test** — Check on phone/tablet viewport
+4. **Transitions test** — Verify buttons/squares animate smoothly on click
+
+### Build verification:
+```bash
+npm run build     # No TypeScript errors?
+npm run lint      # No linting issues?
+npm test          # All tests pass?
+```
+
+---
+
+## Quick Reference: File Locations
+
+| Purpose | File |
+|---|---|
+| Theme colors | [src/index.css](src/index.css#L3-L9) |
+| Start screen | [src/components/StartScreen.tsx](src/components/StartScreen.tsx) |
+| Game board | [src/components/GameScreen.tsx](src/components/GameScreen.tsx) |
+| Bingo squares | [src/components/BingoSquare.tsx](src/components/BingoSquare.tsx) |
+| Win modal | [src/components/BingoModal.tsx](src/components/BingoModal.tsx) |
+| Grid layout | [src/components/BingoBoard.tsx](src/components/BingoBoard.tsx) |
+
+---
+
+## Support & Questions
+
+**Found a design issue?**
+1. Check this guide for existing pattern
+2. Reference the real component examples above
+3. Update `src/index.css` if adding new colors
+4. Update this file with new patterns
+
+**Questions?** Refer to [Tailwind v4 docs](https://tailwindcss.com/) for class reference.
